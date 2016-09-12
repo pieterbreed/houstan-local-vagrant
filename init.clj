@@ -50,7 +50,8 @@
 
   ;; ----------------------------------------
 
-  (if (not (ok! (yoostan-lib.utils/cmd-is-available "vagrant")))
+  (if (not (ok! (yoostan-lib.utils/cmd-is-available "vagrant")
+                "vagrant-is-installed"))
     (bail ["vagrant cannot be found"
            "`vagrant` has to be discoverable by `which`"]))
 
