@@ -43,6 +43,8 @@
     (bail-out! (first ll))
     (System/exit 1))
 
+  (defn diag-lines [ll] (->> ll (map diag!) dorun))
+
   ;; ----------------------------------------
 
   (if (not (ok! (yoostan-lib.utils/cmd-is-available "vagrant")))
@@ -77,8 +79,8 @@
                                      :verbose false
                                      :dir vagrantfile-dir})]
         (diag! "vagrant status output:")
-        (->> vagrant-output (map diag!) dorun)
-
+        (diag-lines vagrant-output)
+        
         ;; get status line
         ;; re-matches returns a vector, the second item in the vector
         ;; will be the match of (.+) in the regex, ie the status
@@ -93,12 +95,15 @@
             "start-status-is-not-created")
       (do
         (diag! "Calling `vagrant up`...")
-        (let [vagrant-output (vagrant "up"
-                                      {:seq true
-                                       :throw true
-                                       :verbose false
-                                       :dir vagrantfile-dir})]
-          (->> vagrant-output (map diag!) dorun))))
+        (diag-lines (vagrant "up"
+                             {:seq true
+                              :throw true
+                              :verbose false
+                              :dir vagrantfile-dir})))
+      (diag-lines ["start-status-is-not-created"
+                   "The init script assumes that the vagrant machine needs"
+                   "to be created from scratch. "
+                   "Therefore, not_created is the only valid status to start with."]))
 
     (=! "running" (get-vagrant-status)
         "end-status-is-running")))
