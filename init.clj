@@ -26,10 +26,13 @@
 
 ;; ----------------------------------------
 
-(def vagrantfile-dir (-> (clojure.java.io/file (System/getProperty "user.dir")
-                                               boot.core/*boot-script*)
-                         .getParentFile
-                         .getCanonicalPath))
+(let [bsf (clojure.java.io/file boot.core/*boot-script*)]
+  (def vagrantfile-dir
+    (-> (or (if (.isAbsolute bsf) bsf)
+            (clojure.java.io/file (System/getProperty "user.dir")
+                                  bsf))
+        .getParentFile
+        .getCanonicalPath)))
 
 ;; ----------------------------------------
 
