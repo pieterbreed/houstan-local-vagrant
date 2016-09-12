@@ -26,7 +26,7 @@
 
 ;; ----------------------------------------
 
-(let [bsf (clojure.java.io/file boot.core/*boot-script*)]
+(let [bsf (-> boot.core/*boot-script* clojure.java.io/file)]
   (def vagrantfile-dir
     (-> (or (if (.isAbsolute bsf) bsf)
             (clojure.java.io/file (System/getProperty "user.dir")
