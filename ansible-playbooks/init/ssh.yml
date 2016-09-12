@@ -1,0 +1,8 @@
+---
+- hosts: all
+  become: true
+  vars:
+    pubkey_path: "{{ lookup('env', 'HOME') }}/.ssh/id_rsa.pub"
+  roles:
+    - { role: vitalk.secure-ssh, ssh_user: '{{ ansible_user }}', ssh_identity_key: '{{ pubkey_path }}' }
+      

@@ -1,0 +1,26 @@
+---
+- hosts: java-machines
+  roles:
+    - { role: ansiblebit.launchpad-ppa-webupd8, launchpad_ppa_webupd8_cache_valid_time: "{{ apt_cache_valid_time }}" }
+  tasks:
+    - name: Accept the Oracle license
+      become: true
+      debconf:
+        name: 'oracle-java8-installer'
+        question: 'shared/accepted-oracle-license-v1-1'
+        value: 'true'
+        vtype: 'select'
+
+    - name: Install requirements
+      become: true
+      apt:
+        cache_valid_time: "{{ apt_cache_valid_time }}"
+        update_cache: true
+        name: '{{ item }}'
+        state: present
+      with_items:
+        - 'language-pack-en'
+        - 'oracle-java8-installer'
+        - 'oracle-java8-set-default'
+        - 'unzip'
+

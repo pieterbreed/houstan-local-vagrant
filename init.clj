@@ -109,4 +109,23 @@
                    "Therefore, not_created is the only valid status to start with."]))
 
     (=! "running" (get-vagrant-status)
-        "end-status-is-running")))
+        "end-status-is-running"))
+
+  ;; ----------------------------------------
+
+  (diag! "Running ansible-playbook ... init.yml")
+  (conch/with-programs [ansible-playbook]
+    (let [playbook-folder (clojure.java.io/file vagrantfile-dir
+                                                "ansible-playbooks")]
+      (diag-lines (ansible-playbook "-i" (.getCanonicalPath
+                                          (clojure.java.io/file playbook-folder
+                                                                "inventory.clj"))
+                                    (.getCanonicalPath
+                                     (clojure.java.io/file playbook-folder
+                                                           "init.yml"))
+                                    {:seq true
+                                     :throw true
+                                     :verbose false}))))
+  
+
+  )

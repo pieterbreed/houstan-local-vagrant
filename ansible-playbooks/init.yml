@@ -1,0 +1,4 @@
+---
+- include: init/networking.yml
+# - include: ssh.yml # only for dev-time
+# - include: deploy_java.yml
