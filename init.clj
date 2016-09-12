@@ -58,8 +58,7 @@
                         environ.core/env)
                 "ip-addr-is-set"))
     (bail ["HOUSTAN_IP not set"
-           "Set the HOUSTAN_IP env variable to the required vagrant ip address."]
-          (diag! )))
+           "Set the HOUSTAN_IP env variable to the required vagrant ip address."]))
 
   (if (not (ok! (some-> :houstan-hostname
                         environ.core/env)
