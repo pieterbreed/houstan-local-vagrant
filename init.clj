@@ -69,6 +69,18 @@
 
   ;; ----------------------------------------
 
+  (if (not (ok! (some-> :ssh-public-key-path
+                        environ.core/env
+                        clojure.java.io/file
+                        .exists)
+                "ssh-public-key-path-specified"))
+    (bail ["SSH public key path not specified"
+           "Set the SSH_PUBLIC_KEY_PATH env variable to point to your"
+           "SSH public key. This will be installed to the vagrant box"
+           "for passwordless login."]))
+  
+  ;; ----------------------------------------
+
   (diag! (str "Vagrant working directory at: " vagrantfile-dir))
   (diag! "Calling `vagrant status`...")
 
