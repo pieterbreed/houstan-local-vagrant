@@ -1,5 +1,7 @@
 ---
 - hosts: java-machines
+  vars:
+    apt_cache_valid_time: 3600
   roles:
     - { role: ansiblebit.launchpad-ppa-webupd8, launchpad_ppa_webupd8_cache_valid_time: "{{ apt_cache_valid_time }}" }
   tasks:

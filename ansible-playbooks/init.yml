@@ -1,4 +1,4 @@
 ---
-- include: init/networking.yml
 - include: init/ssh.yml
-# - include: deploy_java.yml
+- include: init/networking.yml
+- include: init/deploy_java.yml

@@ -15,9 +15,9 @@
 (let [vagrant-host ["vagrant" [192 168 69 100] 22]] 
   (as-> yinv/empty-inventory $
     (yinv/target-> $ vagrant-host {"ansible_user" "vagrant"
-                                   "ansible_password" "vagrant"
                                    "ansible_host" "192.168.69.100"})
     (yinv/target->group-> $ vagrant-host "vagrant-hosts")
+    (yinv/target->group-> $ vagrant-host "java-machines")
     (yinv/inv->ansible--list $)
     (json/write-str $)
     (println $)))

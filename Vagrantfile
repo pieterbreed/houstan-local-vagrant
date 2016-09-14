@@ -33,4 +33,7 @@ Vagrant.configure("2") do |config|
     vb.customize ["modifyvm", :id, "--cpuexecutioncap", "50"]
   end
 
+  config.vm.provision "file", source: "~/.ssh/id_rsa.pub", destination: "~/.ssh/me.pub"
+  config.vm.provision "shell", inline: "sudo -u vagrant bash -c \"cat /home/vagrant/.ssh/me.pub >> /home/vagrant/.ssh/authorized_keys\"" 
+
 end

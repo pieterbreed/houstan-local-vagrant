@@ -128,16 +128,17 @@
   (diag! "Running ansible-playbook ... init.yml")
   (conch/with-programs [ansible-playbook]
     (let [playbook-folder (clojure.java.io/file vagrantfile-dir
-                                                "ansible-playbooks")]
-      (diag-lines (ansible-playbook "-i" (.getCanonicalPath
+                                                "ansible-playbooks")
+          ansible-proc (ansible-playbook "-i" (.getCanonicalPath
+                                               (clojure.java.io/file playbook-folder
+                                                                     "inventory.clj"))
+                                         (.getCanonicalPath
                                           (clojure.java.io/file playbook-folder
-                                                                "inventory.clj"))
-                                    (.getCanonicalPath
-                                     (clojure.java.io/file playbook-folder
-                                                           "init.yml"))
-                                    {:seq true
-                                     :throw true
-                                     :verbose false}))))
-  
-
-  )
+                                                                "init.yml"))
+                                         {:seq true
+                                          :throw false
+                                          :verbose true})]
+      (diag-lines (-> ansible-proc :proc :out))
+      (if (not (=! 0 (-> ansible-proc :exit-code deref)
+                   "ansible-playbook-init-succeeded"))
+        (bail ["Ansible init playbook failed"])))))
