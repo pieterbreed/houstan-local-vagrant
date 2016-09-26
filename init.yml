@@ -1,0 +1,4 @@
+---
+- include: ssh.yml
+- include: networking.yml
+- include: deploy_java.yml
