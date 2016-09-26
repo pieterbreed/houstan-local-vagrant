@@ -1,7 +1,7 @@
 #!/usr/bin/env boot
 
 (set-env! :dependencies '[[pieterbreed/tappit "0.9.8"]
-                          [pieterbreed/yoostan-lib "0.0.1-SNAPSHOT"]
+                          
                           [me.raynes/conch "0.8.0"]
                           [environ "1.0.3"]])
 
@@ -22,7 +22,30 @@
 (require '[tappit.producer :refer [with-tap! ok]])
 (require '[me.raynes.conch :as conch])
 (require 'boot.core)
-(require 'yoostan-lib.utils)
+
+
+;; ----------------------------------------
+
+(defn cmd-is-available
+  "Tests whether a UNIX shell command can be found."
+  [appname]
+  (conch/with-programs [which]
+    (let [res (which appname {:throw false
+                              :verbose true})]
+      (= 0 (deref (:exit-code res))))))
+
+(defn version-of-app-found
+  "Runs <command> <-version> and tests the output against a regex"
+  [r cmd p]
+  (conch/let-programs
+      [c cmd]
+
+    (let [res (c p {:throw false
+                    :verbose true})
+          exit-code (deref (:exit-code res))]
+      
+      (if (not= 0 exit-code) false
+          (boolean (re-find r (:stdout res)))))))
 
 ;; ----------------------------------------
 
@@ -50,7 +73,7 @@
 
   ;; ----------------------------------------
 
-  (if (not (ok! (yoostan-lib.utils/cmd-is-available "vagrant")
+  (if (not (ok! (cmd-is-available "vagrant")
                 "vagrant-is-installed"))
     (bail ["vagrant cannot be found"
            "`vagrant` has to be discoverable by `which`"]))
