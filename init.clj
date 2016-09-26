@@ -126,6 +126,7 @@
   ;; ----------------------------------------
 
   (diag! "Running ansible-playbook ... init.yml")
+  (diag! "(This step takes long and lacks feedback. Let it finish...)")
   (conch/with-programs [ansible-playbook]
     (let [playbook-folder vagrantfile-dir
           ansible-proc (ansible-playbook "-i" (.getCanonicalPath

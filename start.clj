@@ -105,39 +105,26 @@
              first
              second)))
 
-    ;; check if status is not_created, before calling up
-    (if (=! "not_created" (get-vagrant-status)
-            "start-status-is-not-created")
-      (do
-        (diag! "Calling `vagrant up`...")
-        (diag-lines (vagrant "up"
-                             {:seq true
-                              :throw true
-                              :verbose false
-                              :dir vagrantfile-dir})))
-      (diag-lines ["start-status-is-not-created"
-                   "The init script assumes that the vagrant machine needs"
-                   "to be created from scratch. "
-                   "Therefore, not_created is the only valid status to start with."]))
+    (let [status (get-vagrant-status)
+          status-is-one-of (fn [list-of-status]
+                             (some #(= status %)
+                                   list-of-status))]
+      (cond
+        (status-is-one-of ["running"]) (diag! "VM is running (already)")
+        (status-is-one-of ["not_created"]) (do
+                                             (diag-lines ["The system has not been init'ed yet."
+                                                          "Run the `init.clj` command first"])
+                                             (bail-out! "VM not provisioned yet.")
+                                             (System/exit 1))
+        true (do
+               (diag! "Calling `vagrant up`...")
+               (diag-lines (vagrant "up"
+                                    {:seq true
+                                     :throw true
+                                     :verbose false
+                                     :dir vagrantfile-dir})))))
 
     (=! "running" (get-vagrant-status)
         "end-status-is-running"))
 
-  ;; ----------------------------------------
-
-  (diag! "Running ansible-playbook ... init.yml")
-  (conch/with-programs [ansible-playbook]
-    (let [playbook-folder vagrantfile-dir
-          ansible-proc (ansible-playbook "-i" (.getCanonicalPath
-                                               (clojure.java.io/file playbook-folder
-                                                                     "inventory.clj"))
-                                         (.getCanonicalPath
-                                          (clojure.java.io/file playbook-folder
-                                                                "init.yml"))
-                                         {:seq true
-                                          :throw false
-                                          :verbose true})]
-      (diag-lines (-> ansible-proc :proc :out))
-      (if (not (=! 0 (-> ansible-proc :exit-code deref)
-                   "ansible-playbook-init-succeeded"))
-        (bail ["Ansible init playbook failed"])))))
+  )
