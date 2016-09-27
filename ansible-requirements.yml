@@ -1,0 +1,4 @@
+---
+- src: ansiblebit.launchpad-ppa-webupd8
+- src: vitalk.secure-ssh
+# - src: williamyeh.prometheus
