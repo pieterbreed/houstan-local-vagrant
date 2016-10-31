@@ -10,7 +10,9 @@
 ;; warnings, drama. we need an unreleased version of clojure for this script
 (require 'environ.core)
 (when (not (re-find #"1\.9\.0"
-                    (environ.core/env :boot-clojure-version)))
+                    (or 
+                     (environ.core/env :boot-clojure-version)
+                     "")))
   (println "# Set ENV variables like this:")
   (println "# $ export BOOT_CLOJURE_VERSION=1.9.0-alpha10")
   (println "Bail out! Requires BOOT_CLOJURE_VERSION=1.9.0-alpha10 or higher")
