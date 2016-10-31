@@ -15,7 +15,7 @@
 (let [vagrant-host ["vagrant" (env/env :houstan-hostname) 22]] 
   (as-> yinv/empty-inventory $
     (yinv/add-target $ vagrant-host {"ansible_user" "vagrant"
-                                     "ansible_host" (env/env :houstan-hostname)})
+                                     "ansible_host" (env/env :houstan-ip)})
     (yinv/add-target-to-group $ vagrant-host "vagrant-hosts")
     (yinv/add-target-to-group $ vagrant-host "java-machines")
     (yinv/make-ansible-list $)

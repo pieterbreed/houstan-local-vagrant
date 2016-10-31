@@ -150,6 +150,23 @@
 
   ;; ----------------------------------------
 
+  (diag! "Running ansible-galaxy ...")
+  (conch/with-programs [ansible-galaxy]
+    (let [playbook-folder vagrantfile-dir
+          ansible-proc (ansible-galaxy "install"
+                                       "-r"
+                                       (.getCanonicalPath
+                                               (clojure.java.io/file playbook-folder
+                                                                     "ansible-requirements.yml"))
+                                         {:seq true
+                                          :throw false
+                                          :verbose true})]
+      (diag-lines (-> ansible-proc :proc :out))
+      (if (not (=! 0 (-> ansible-proc :exit-code deref)
+                   "ansible-galaxy-install-succeeded"))
+        (bail ["Ansible galaxy install"]))))
+  ;; ----------------------------------------
+
   (diag! "Running ansible-playbook ... init.yml")
   (diag! "(This step takes long and lacks feedback. Let it finish...)")
   (conch/with-programs [ansible-playbook]
@@ -166,4 +183,7 @@
       (diag-lines (-> ansible-proc :proc :out))
       (if (not (=! 0 (-> ansible-proc :exit-code deref)
                    "ansible-playbook-init-succeeded"))
-        (bail ["Ansible init playbook failed"])))))
+        (bail ["Ansible init playbook failed"]))))
+
+
+  )
